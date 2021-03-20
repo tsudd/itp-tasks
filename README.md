@@ -11,4 +11,4 @@ There are some rules:
 - every task has it's own branch, so commit your solitions to the specific branch
 - in file: to run your code, please create seperate function (like solve()), which has all needed statements to test it, so anyone can call it and easy run your code
 - sign your solutions with commentary like # {name}'s solution
-
+- to name branches use this pattern: "task{num}" please replace {num} with number of the specific task number  
