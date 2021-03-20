@@ -8,7 +8,7 @@ Hi guys! There we can share our solutions with each other, discuss them, finding
 There are some rules:
 - Please, lets keep our code and files clean
 - you have another solution - just add it!
-- every task has it's own file
+- every task has it's own branch, so commit your solitions to the specific branch
 - in file: to run your code, please create seperate function (like solve()), which has all needed statements to test it, so anyone can call it and easy run your code
 - sign your solutions with commentary like # {name}'s solution
 
