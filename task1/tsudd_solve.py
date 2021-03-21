@@ -34,21 +34,90 @@ TEXT_EXAMPLE = "By some measures, Joe Biden has gotten off to a slow start as Pr
               "a bold piece of legislation,\" says Delaware Sen. Chris Coons, a Biden protégé who occupies the " \
               "President\'s former Senate seat. “He\'s continuing his outreach to Republicans."
 
+SYNTAX_SYMBOLS_EQU = {',': ' ', ' - ': '   ', '(': ' ', ')': ' ', '\"': ' ', '“': ' ', '.': ' '}
+FILE_OUTPUT = True
+OUTPUT_FILE_NAME = "dist.txt"
+OUTPUT_TOPIC = "Text processing\n"
+TABLE_TOPIC = "Word ==> count\n"
 
-def process_text(text):
+
+def process_text(text, fp=None):
     assert type(text) == str
 
-    statements = text.lover().split('.')
+    statements = text.lower().split('. ')
     words_stat = {}
-    statement_words_count = 0
+    words_count = 0
+    statements_amount = 0
+    statement_words = []
 
     for statement in statements:
-        words = statement.replace()
+        if len(statement) == 0:
+            continue
+        for sub, equ in SYNTAX_SYMBOLS_EQU.items():
+            statement = statement.replace(sub, equ)
+        statements_amount += 1
+        words = statement.split(' ')
+        count = 0
+        for word in words:
+            if len(word) == 0:
+                continue
+            count += 1
+            try:
+                words_stat[word] += 1
+            except KeyError:
+                words_stat[word] = 1
+        words_count += count
+        statement_words.append(count)
 
+    print_stats(words_stat, fp)
+    average_words_amount(words_count, statements_amount, fp)
+    median_word_count(statement_words, fp)
+
+
+def print_stats(words_stat, fp=None):
+    assert type(words_stat) == dict
+
+    if fp:
+        fp.write(TABLE_TOPIC)
+        for k, v in words_stat.items():
+            fp.write(f"{k:30} ==> {v:10d}\n")
+    else:
+        print(TABLE_TOPIC)
+        for k, v in words_stat.items():
+            print(f"{k:30} ==> {v:10d}\n")
+
+
+def average_words_amount(words_amount, statements_amount, fp=None):
+    assert type(words_amount) == int and type(statements_amount) == int
+
+    s = f"Average words amount in one sentence is {round(words_amount / statements_amount, 1)}.\n"
+
+    if fp:
+        fp.write(s)
+    else:
+        print(s)
+
+
+def median_word_count(words_count, fp=None):
+    assert type(words_count) == list
+
+    words_count.sort()
+    median_ind = len(words_count) // 2
+    s = f"Median word amount in one sentence is {words_count[median_ind]}.\n"
+    if fp:
+        fp.write(s)
+    else:
+        print(s)
 
 
 def solve(text=TEXT_EXAMPLE):
-    print("Processing text:")
-    print(text)
+    if FILE_OUTPUT:
+        fp = open(OUTPUT_FILE_NAME, "w")
+        fp.write(OUTPUT_TOPIC)
+        process_text(text, fp)
+    else:
+        print(OUTPUT_TOPIC)
+        print(text)
+        process_text(text)
 
 
