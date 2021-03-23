@@ -1,4 +1,4 @@
-# first solution
+import re
 
 TEXT_EXAMPLE = "By some measures, Joe Biden has gotten off to a slow start as President. His transition was stalled by " \
               "Donald Trump’s refusal to acknowledge defeat. His Cabinet nominees are taking longer than most to be " \
@@ -34,7 +34,10 @@ TEXT_EXAMPLE = "By some measures, Joe Biden has gotten off to a slow start as Pr
               "a bold piece of legislation,\" says Delaware Sen. Chris Coons, a Biden protégé who occupies the " \
               "President\'s former Senate seat. “He\'s continuing his outreach to Republicans."
 
-SYNTAX_SYMBOLS_EQU = {',': ' ', ' - ': '   ', '(': ' ', ')': ' ', '\"': ' ', '“': ' ', '.': ' '}
+SYNTAX_SYMBOLS_REGEX = '[^\w\s]'
+SYNTAX_SYMBOLS_AND_DOT_REGEX = '[^\w\s.]'
+END_SYMBOLS_REGEX = '[!?]'
+
 FILE_OUTPUT = True
 OUTPUT_FILE_NAME = "dist.txt"
 OUTPUT_TOPIC = "Text processing\n"
@@ -44,39 +47,36 @@ TABLE_TOPIC = "Word ==> count\n"
 def process_text(text, fp=None):
     assert type(text) == str
 
-    statements = text.lower().split('. ')
+    words = re.sub(SYNTAX_SYMBOLS_REGEX, ' ', text.lower().replace('\n', ' ')).split(' ')
     words_stat = {}
     words_count = 0
-    statements_amount = 0
     statement_words = []
 
-    for statement in statements:
-        if len(statement) == 0:
+    for word in words:
+        if len(word) == 0:
             continue
-        for sub, equ in SYNTAX_SYMBOLS_EQU.items():
-            statement = statement.replace(sub, equ)
-        statements_amount += 1
-        words = statement.split(' ')
+        words_count += 1
+        try:
+            words_stat[word] += 1
+        except KeyError:
+            words_stat[word] = 1
+    for sentence in re.sub(SYNTAX_SYMBOLS_AND_DOT_REGEX, ' ', re.sub(END_SYMBOLS_REGEX, '.', text)).split('.'):
         count = 0
-        for word in words:
-            if len(word) == 0:
-                continue
-            count += 1
-            try:
-                words_stat[word] += 1
-            except KeyError:
-                words_stat[word] = 1
-        words_count += count
-        statement_words.append(count)
+        for word in sentence.split(' '):
+            if len(word) > 0:
+                count += 1
+        if count > 0:
+            statement_words.append(count)
 
     print_stats(words_stat, fp)
-    average_words_amount(words_count, statements_amount, fp)
+    average_words_amount(statement_words, fp)
     median_word_count(statement_words, fp)
 
 
 def print_stats(words_stat, fp=None):
     assert type(words_stat) == dict
 
+    sorted(words_stat.items(), key=lambda item: item[1], reverse=True)
     if fp:
         fp.write(TABLE_TOPIC)
         for k, v in words_stat.items():
@@ -87,10 +87,8 @@ def print_stats(words_stat, fp=None):
             print(f"{k:30} ==> {v:10d}\n")
 
 
-def average_words_amount(words_amount, statements_amount, fp=None):
-    assert type(words_amount) == int and type(statements_amount) == int
-
-    s = f"Average words amount in one sentence is {round(words_amount / statements_amount, 1)}.\n"
+def average_words_amount(words_amount: list,  fp=None):
+    s = f"Average words amount in one sentence is {round(sum(words_amount) / len(words_amount), 1)}.\n"
 
     if fp:
         fp.write(s)
@@ -102,8 +100,8 @@ def median_word_count(words_count, fp=None):
     assert type(words_count) == list
 
     words_count.sort()
-    median_ind = len(words_count) // 2
-    s = f"Median word amount in one sentence is {words_count[median_ind]}.\n"
+    num = (words_count[len(words_count) // 2] + words_count[(len(words_count) - 1) // 2]) / 2
+    s = f"Median word amount in one sentence is {num}.\n"
     if fp:
         fp.write(s)
     else:
