@@ -1,7 +1,9 @@
 import re
 
 MAIL_REGEX = '[^ ]+@[\w]+.[\w]+'
-
+FLOAT_REGEX = '^[\d]+.?[\d]*$'
+URL_REGEX = '^(?P<scheme>[\w]+)://((?P<host>[\d.]+):(?P<port>[\d]{4}))?(?P<path>[^\s #&?]+)(?P<parameters>\?' \
+            '((?P<parameter>[\w\d]+)=(?P<value>[^=&]+))(\&((?P<npar>[\w\d]+)=(?P<nvalue>[^=&]+))+)+)?'
 
 def solve():
     print("Starting of the program\nInput \'q\' after \':\' to exit.")
