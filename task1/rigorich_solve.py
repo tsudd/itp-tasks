@@ -1,7 +1,6 @@
-print('1) Text statistics\n')
-
 import re
 import string
+
 
 def TextFromFile():
     DELIMETER = '\\'
@@ -11,11 +10,6 @@ def TextFromFile():
     text = file.read()
     file.close()
     return text
- 
-text = TextFromFile()
-
-print(text)
-print("\n\n-----")
 
 
 def FrequencyList(s: str) -> list:
@@ -25,10 +19,6 @@ def FrequencyList(s: str) -> list:
             cnt.setdefault(i, 0)
             cnt[i] += 1
     return sorted(cnt.items(), key = lambda item: item[1], reverse = True)
-
-print("Frequency list:")
-print(FrequencyList(text))
-print("-----")
 
 
 def WordsCounts(s: str) -> list:
@@ -49,10 +39,6 @@ def Median(l: list):
     l = sorted(l)
     return (l[len(l) // 2] + l[(len(l) - 1) // 2]) / 2
 
-print("Average amount of words in sentence:", Average(WordsCounts(text)))
-print("Median amount of words in sentence:", Median(WordsCounts(text)))
-print("-----")
-
 
 def Ngramms(s: str, K: int) -> str:
     cnt = {}
@@ -63,9 +49,25 @@ def Ngramms(s: str, K: int) -> str:
         cnt[subs] += 1
     return sorted(cnt.items(), key = lambda item: item[1], reverse = True)
 
-K = 4
-N = 10
-dct = Ngramms(text, K)
-print(f"Top-{N} {K}-gramms:")
-print([dct[i] for i in range(min(N, len(dct)))])
-print("-----")
+
+def solve(text: str = None):
+    print('1) Text statistics\n')
+    if text is None:
+        text = TextFromFile()
+    print(text)
+    print()
+    print("-----")
+    print("Frequency list:")
+    print(FrequencyList(text))
+    print("-----")
+    print("Average amount of words in sentence:", Average(WordsCounts(text)))
+    print("Median amount of words in sentence:", Median(WordsCounts(text)))
+    print("-----")
+    K = 4
+    N = 10
+    dct = Ngramms(text, K)
+    print(f"Top-{N} {K}-gramms:")
+    print([dct[i] for i in range(min(N, len(dct)))])
+    print("-----")
+
+#solve()
